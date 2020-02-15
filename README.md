@@ -18,7 +18,7 @@ Run it in your project, provide directory to generate output files into -- direc
 Morpheus will generate a file per project variable with its dependency graph where nodes are other variables in the project or in one of the dependencies of the project.
 
 ```
-clj -A:morpheus -m thomasa.morpheus.main -d graphs -f png src test
+clj -A:morpheus -d graphs -f png src test
 ```
 
 ## Example

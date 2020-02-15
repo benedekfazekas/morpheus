@@ -14,4 +14,8 @@ Morpheus will generate a file per project variable with its dependency graph whe
 clj -A:morpheus -m thomasa.morpheus.main -d graphs2 -f png src test
 ```
 
-Uses [clj-kondo](https://github.com/borkdude/clj-kondo)
+## Example
+
+![mranderson.move:replace-in-import.svg](./mranderson.move:replace-in-import.svg)
+
+Uses [clj-kondo](https://github.com/borkdude/clj-kondo).

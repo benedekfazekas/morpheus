@@ -22,11 +22,11 @@
                (:var-usages analysis))]
     (apply graph/digraph (concat nodes edges))))
 
-(defn node-subgraph->file [dir-prefix g node]
+(defn node-subgraph->file [dir format g node]
   (-> (derived/subgraph-reachable-from g node)
-      lio/render-to-bytes
+      (lio/render-to-bytes :fmt (keyword format))
       (io/copy
-       (File. (str dir-prefix (str/replace node "/" ":") ".png")))))
+       (File. dir (str (str/replace node "/" ":") "." (name format))))))
 
 (comment
   (let [analysis (lint-analysis "src")

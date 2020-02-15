@@ -1,3 +1,5 @@
-{:deps {org.clojure/clojure {:mvn/version "RELEASE"}
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "RELEASE"}
         aysylu/loom {:mvn/version "1.0.2"}
-        clj-kondo {:mvn/version "2020.01.27"}}}
+        clj-kondo {:mvn/version "2020.01.27"}
+        org.clojure/tools.cli {:mvn/version "0.4.2"}}}

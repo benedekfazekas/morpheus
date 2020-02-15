@@ -1,6 +1,6 @@
 # Morpheus
 
-Generate dependency graph(s) for variables.
+Generate dependency graph(s) for variables in Clojure(Script) namespaces.
 
 ## Usage
 
@@ -25,4 +25,4 @@ clj -A:morpheus -m thomasa.morpheus.main -d graphs -f png src test
 
 ![mranderson.move:replace-in-import.svg](./mranderson.move:replace-in-import.svg)
 
-Uses [clj-kondo](https://github.com/borkdude/clj-kondo).
+Uses [clj-kondo](https://github.com/borkdude/clj-kondo) to analyse namespaces under provided paths.

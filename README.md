@@ -21,6 +21,8 @@ Morpheus will generate a file per project variable with its dependency graph whe
 clj -A:morpheus -d graphs -f png src test
 ```
 
+For anything else than a dot file you need to graphiz installed. Alternatively you can use a viewer online, for example [edotor](https://edotor.net/).
+
 ## Example
 
 ![mranderson.move:replace-in-import.svg](./mranderson.move:replace-in-import.svg)

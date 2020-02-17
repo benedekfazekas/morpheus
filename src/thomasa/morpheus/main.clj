@@ -2,7 +2,8 @@
   (:require [thomasa.morpheus.core :as m]
             [clojure.tools.cli :as cli]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.datafy :as datafy]))
 
 (defn usage [options-summary]
   (str/join
@@ -37,5 +38,4 @@
                       (fn [{:keys [ns name]}] (str ns "/" name))
                       (:var-definitions analysis))]
         (doseq [node nodes]
-          (m/node-subgraph->file dir format graph node)))
-      )))
+          (m/graph->file dir (str/replace node "/" ":") format (datafy/nav (datafy/datafy graph) nil node)))))))

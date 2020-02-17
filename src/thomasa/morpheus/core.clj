@@ -4,13 +4,34 @@
             [loom.io :as lio]
             [loom.derived :as derived]
             [clojure.java.io :as io]
-            [clojure.string :as str])
+            [clojure.core.protocols :as p]
+            [clojure.datafy :as datafy])
   (:import [java.io File]))
+
+(declare datafy-var-deps-graph)
 
 (defn lint-analysis [paths]
   (:analysis
    (clj-kondo/run! {:lint paths
                     :config {:output {:analysis true}}})))
+
+(defn- ->graph
+  ([graph]
+   (with-meta
+     graph
+     {`p/datafy datafy-var-deps-graph}))
+  ([nodes edges]
+   (->graph (apply graph/digraph (concat nodes edges)))))
+
+(defn- datafy-var-deps-graph [g]
+  (with-meta
+    {:nodes (graph/nodes g)
+     :edges (graph/edges g)}
+    {`p/nav
+     (fn [_graph _k node]
+       (->graph (derived/subgraph-reachable-from g node)))
+     `datafy/obj g
+     `datafy/class (class g)}))
 
 (defn var-deps-graph [analysis]
   (let [nodes (map
@@ -20,13 +41,12 @@
                (fn [{:keys [name to from from-var]}]
                  [(str from "/" from-var) (str to "/" name)])
                (:var-usages analysis))]
-    (apply graph/digraph (concat nodes edges))))
+    (->graph nodes edges)))
 
-(defn node-subgraph->file [dir format g node]
-  (-> (derived/subgraph-reachable-from g node)
-      (lio/render-to-bytes :fmt (keyword format))
-      (io/copy
-       (File. dir (str (str/replace node "/" ":") "." (name format))))))
+(defn graph->file [dir filename format g]
+  (io/copy
+   (lio/render-to-bytes g :fmt (keyword format))
+   (File. dir (str filename "." (name format)))))
 
 (comment
   (let [analysis (lint-analysis "src")
@@ -34,4 +54,4 @@
                (fn [{:keys [ns name]}] (str ns "/" name))
                (:var-definitions analysis))]
     (doseq [node nodes]
-      (node-subgraph->file "graphs/" var-deps-graph node))))
+      (graph->file "graphs/" var-deps-graph node))))

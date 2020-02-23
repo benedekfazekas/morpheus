@@ -23,8 +23,10 @@ clj -A:morpheus -d graphs -f png src test
 
 For anything else than a dot file you need to graphiz installed. Alternatively you can use a viewer online, for example [edotor](https://edotor.net/).
 
+If you generate svg format you can leverage the references added to the graph nodes: you can navigate to subgraphs in your dependency tree.
+
 ## Example
 
-![mranderson.move:replace-in-import.svg](./mranderson.move:replace-in-import.svg)
+![mranderson.move__replace-in-import.svg](./mranderson.move__replace-in-import.svg)
 
 Uses [clj-kondo](https://github.com/borkdude/clj-kondo) to analyse namespaces under provided paths.

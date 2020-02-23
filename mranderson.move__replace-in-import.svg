@@ -12,8 +12,11 @@
 <!-- mranderson.move/replace&#45;in&#45;import -->
 <g id="node1" class="node">
 <title>mranderson.move/replace&#45;in&#45;import</title>
+<g id="a_node1"><a xlink:href="./mranderson.move__replace-in-import.svg" xlink:title="mranderson.move/replace&#45;in&#45;import">
 <ellipse fill="none" stroke="black" cx="664.53" cy="-306" rx="138.09" ry="18"/>
 <text text-anchor="middle" x="664.53" y="-301.8" font-family="Times,serif" font-size="14.00">mranderson.move/replace&#45;in&#45;import</text>
+</a>
+</g>
 </g>
 <!-- rewrite&#45;clj.zip/root -->
 <g id="node2" class="node">
@@ -42,8 +45,11 @@
 <!-- mranderson.move/import? -->
 <g id="node4" class="node">
 <title>mranderson.move/import?</title>
+<g id="a_node4"><a xlink:href="./mranderson.move__import%3F.svg" xlink:title="mranderson.move/import?">
 <ellipse fill="none" stroke="black" cx="119.53" cy="-162" rx="103.85" ry="18"/>
 <text text-anchor="middle" x="119.53" y="-157.8" font-family="Times,serif" font-size="14.00">mranderson.move/import?</text>
+</a>
+</g>
 </g>
 <!-- mranderson.move/replace&#45;in&#45;import&#45;&gt;mranderson.move/import? -->
 <g id="edge3" class="edge">
@@ -90,8 +96,11 @@
 <!-- mranderson.move/replace&#45;in&#45;import* -->
 <g id="node8" class="node">
 <title>mranderson.move/replace&#45;in&#45;import*</title>
+<g id="a_node8"><a xlink:href="./mranderson.move__replace-in-import*.svg" xlink:title="mranderson.move/replace&#45;in&#45;import*">
 <ellipse fill="none" stroke="black" cx="834.53" cy="-234" rx="142.43" ry="18"/>
 <text text-anchor="middle" x="834.53" y="-229.8" font-family="Times,serif" font-size="14.00">mranderson.move/replace&#45;in&#45;import*</text>
+</a>
+</g>
 </g>
 <!-- mranderson.move/replace&#45;in&#45;import&#45;&gt;mranderson.move/replace&#45;in&#45;import* -->
 <g id="edge7" class="edge">
@@ -234,8 +243,11 @@
 <!-- mranderson.move/java&#45;style&#45;prefix? -->
 <g id="node18" class="node">
 <title>mranderson.move/java&#45;style&#45;prefix?</title>
+<g id="a_node18"><a xlink:href="./mranderson.move__java-style-prefix%3F.svg" xlink:title="mranderson.move/java&#45;style&#45;prefix?">
 <ellipse fill="none" stroke="black" cx="1228.53" cy="-162" rx="138.1" ry="18"/>
 <text text-anchor="middle" x="1228.53" y="-157.8" font-family="Times,serif" font-size="14.00">mranderson.move/java&#45;style&#45;prefix?</text>
+</a>
+</g>
 </g>
 <!-- mranderson.move/replace&#45;in&#45;import*&#45;&gt;mranderson.move/java&#45;style&#45;prefix? -->
 <g id="edge19" class="edge">
@@ -294,8 +306,11 @@
 <!-- mranderson.move/&#45;&gt;new&#45;import&#45;node -->
 <g id="node23" class="node">
 <title>mranderson.move/&#45;&gt;new&#45;import&#45;node</title>
+<g id="a_node23"><a xlink:href="./mranderson.move__-%3Enew-import-node.svg" xlink:title="mranderson.move/&#45;&gt;new&#45;import&#45;node">
 <ellipse fill="none" stroke="black" cx="1530.53" cy="-162" rx="145.49" ry="18"/>
 <text text-anchor="middle" x="1530.53" y="-157.8" font-family="Times,serif" font-size="14.00">mranderson.move/&#45;&gt;new&#45;import&#45;node</text>
+</a>
+</g>
 </g>
 <!-- mranderson.move/replace&#45;in&#45;import*&#45;&gt;mranderson.move/&#45;&gt;new&#45;import&#45;node -->
 <g id="edge26" class="edge">
@@ -330,8 +345,11 @@
 <!-- mranderson.move/java&#45;package -->
 <g id="node24" class="node">
 <title>mranderson.move/java&#45;package</title>
+<g id="a_node24"><a xlink:href="./mranderson.move__java-package.svg" xlink:title="mranderson.move/java&#45;package">
 <ellipse fill="none" stroke="black" cx="1279.53" cy="-90" rx="122.62" ry="18"/>
 <text text-anchor="middle" x="1279.53" y="-85.8" font-family="Times,serif" font-size="14.00">mranderson.move/java&#45;package</text>
+</a>
+</g>
 </g>
 <!-- mranderson.move/java&#45;style&#45;prefix?&#45;&gt;mranderson.move/java&#45;package -->
 <g id="edge27" class="edge">

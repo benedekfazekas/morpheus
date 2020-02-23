@@ -37,5 +37,6 @@
                       (fn [{:keys [ns name]}] (str ns "/" name))
                       (:var-definitions analysis))]
         (doseq [node nodes]
-          (m/node-subgraph->file dir format graph node)))
-      )))
+          (-> (m/node->subgraph graph node)
+              (m/add-ref-to-subgraphs nodes format)
+              (m/graph->file! dir node format)))))))

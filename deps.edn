@@ -2,4 +2,8 @@
  :deps {org.clojure/clojure {:mvn/version "RELEASE"}
         aysylu/loom {:mvn/version "1.0.2"}
         clj-kondo {:mvn/version "2020.01.27"}
-        org.clojure/tools.cli {:mvn/version "0.4.2"}}}
+        org.clojure/tools.cli {:mvn/version "0.4.2"}}
+ :aliases
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-590"}
+                      lambdaisland/kaocha-cloverage {:mvn/version "0.0-41"}}
+         :extra-paths ["test-resources"]}}}

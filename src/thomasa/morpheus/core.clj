@@ -11,7 +11,7 @@
   (:import [java.io File]
            [java.net URLEncoder]))
 
-(declare datafy-var-deps-graph)
+(declare datafy-graph)
 
 (defn filename
   "Generate filename based on `node` and `format`.
@@ -26,6 +26,11 @@
   [graph]
   (:nodes (datafy/datafy graph)))
 
+(defn ->edges
+  "Get `edges` of `graph`"
+  [graph]
+  (:edges (datafy/datafy graph)))
+
 (defn lint-analysis [paths]
   (:analysis
    (clj-kondo/run! {:lint paths
@@ -35,11 +40,11 @@
   ([graph]
    (with-meta
      graph
-     {`p/datafy datafy-var-deps-graph}))
+     {`p/datafy datafy-graph}))
   ([nodes edges]
    (->graph (apply graph/digraph (concat nodes edges)))))
 
-(defn- datafy-var-deps-graph [g]
+(defn- datafy-graph [g]
   (with-meta
     {:nodes (graph/nodes g)
      :edges (graph/edges g)}
@@ -69,6 +74,13 @@
   `node` needs to be immediate child of the root node of `graph`"
   [graph node]
   (datafy/nav (datafy/datafy graph) nil node))
+
+(defn path->subgraph
+  "Navigate to subgraph reachable from `path`.
+
+  `path` is applied from the root node of `graph`"
+  [graph path]
+  (reduce node->subgraph graph path))
 
 (defn add-ref-to-subgraphs
   "Adds references to the `graph` in the `:URL` attribute of its nodes to subgraphs reachable from `nodes`."

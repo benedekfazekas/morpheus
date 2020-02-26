@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/benedekfazekas/morpheus.svg?style=svg)](https://circleci.com/gh/benedekfazekas/morpheus)
+[![codecov](https://codecov.io/gh/benedekfazekas/morpheus/branch/master/graph/badge.svg)](https://codecov.io/gh/benedekfazekas/morpheus)
+
 # Morpheus
 
 Generate dependency graph(s) for variables in Clojure(Script) namespaces.
@@ -9,7 +12,7 @@ Add an alias for `morpheus` in your deps.edn.
 ```clojure
 {:aliases
   {:morpheus {:extra-deps {thomasa/morpheus {:git/url "https://github.com/benedekfazekas/morpheus.git"
-                                             :sha "6fd42132caf63691eaa5a9ecf236c63986b07c88"}}
+                                             :sha "d3decebc1cb9ef697cd34781f9cf83d44a071e85"}}
               :main-opts ["-m" "thomasa.morpheus.main"]}}}
 ```
 

@@ -42,7 +42,7 @@
      graph
      {`p/datafy datafy-graph}))
   ([nodes edges]
-   (->graph (apply graph/digraph (concat nodes edges)))))
+   (->graph (.transpose (apply graph/digraph (concat nodes edges))))))
 
 (defn- datafy-graph [g]
   (with-meta

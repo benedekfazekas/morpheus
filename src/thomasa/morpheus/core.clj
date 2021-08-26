@@ -1,6 +1,6 @@
 (ns thomasa.morpheus.core
   (:require [clj-kondo.core :as clj-kondo]
-            [loom.graph :as graph]
+            [loom.graph :as graph :refer [transpose]]
             [loom.attr :as attr]
             [loom.io :as lio]
             [loom.derived :as derived]
@@ -42,7 +42,7 @@
      graph
      {`p/datafy datafy-graph}))
   ([nodes edges]
-   (->graph (.transpose (apply graph/digraph (concat nodes edges))))))
+   (->graph (transpose (apply graph/digraph (concat nodes edges))))))
 
 (defn- datafy-graph [g]
   (with-meta

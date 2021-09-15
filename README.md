@@ -24,7 +24,7 @@ Morpheus will generate a file per project variable with its dependency graph whe
 clj -A:morpheus -d graphs -f png src test
 ```
 
-For anything else than a dot file you need to graphiz installed. Alternatively you can use a viewer online, for example [edotor](https://edotor.net/).
+For anything else than a dot file you need to have graphiz installed. Alternatively you can use a viewer online, for example [edotor](https://edotor.net/).
 
 If you generate svg format you can leverage the references added to the graph nodes: you can navigate to subgraphs in your dependency tree.
 

@@ -2,9 +2,27 @@
   (:require [thomasa.morpheus.core :as m]
             [clojure.edn :as edn]
             [clojure.test :as t]
-            [loom.attr :as attr]))
+            [loom.attr :as attr]
+            [clojure.java.shell :as sh]))
 
-(def mranderson-analysis (:analysis (edn/read-string (slurp "test-resources/analysis-2020-02-12.edn"))))
+(def mranderson-analysis (:analysis (edn/read-string (slurp "test-resources/analysis-kondo-2021-09-15.edn"))))
+
+(t/deftest analysis-test
+  (let [morph-temp-dir (doto (java.io.File/createTempFile "morpheus" "") (.delete) (.mkdirs))]
+    (println (format "temp dir: %s" (str morph-temp-dir)))
+    (sh/with-sh-dir morph-temp-dir
+      (sh/sh "git" "clone" "--depth" "1" "git@github.com:benedekfazekas/mranderson.git" "--branch" "v0.5.3" "--single-branch"))
+    (let [mranderson-053-analysis (m/lint-analysis [(format "%s/mranderson/src" (str morph-temp-dir))])]
+      (t/is (=
+             #{:namespace-definitions
+               :namespace-usages
+               :var-definitions
+               :var-usages
+               :keywords}
+             (set (keys mranderson-053-analysis)))
+            "analysis should have the sections morpheus wants to work with")
+      (t/is (= 94 (count (:var-definitions mranderson-053-analysis))) "analysis should contain the right amount of var defs")
+      (t/is (= 1220 (count (:var-usages mranderson-053-analysis))) "analysis should contain the right amount of var usages"))))
 
 (t/deftest low-level-graph-api-test
   (let [graph (#'m/->graph ["A"] [["A" "B"] ["A" "C"]])]
@@ -15,7 +33,7 @@
   (let [mranderson-graph (m/var-deps-graph mranderson-analysis)
         nodes (m/->nodes mranderson-graph)
         nodes-set (set nodes)]
-    (t/is (= 295 (count nodes)) "Not the expected number of nodes found.")
+    (t/is (= 298 (count nodes)) "Not the expected number of nodes found.")
     (t/is (nodes-set "mranderson.move/replace-in-ns-form") "mranderson var is not node")
     (t/is (nodes-set "rewrite-clj.zip/node") "mranderson dependency var is not node")
     (t/is (nodes-set "clojure.core/let") "clojure.core var is not node")))
@@ -25,8 +43,8 @@
         nodes (m/->nodes mranderson-core-str-graph)
         edges (m/->edges mranderson-core-str-graph)
         nodes-set (set nodes)]
-    (t/is (= 38 (count nodes)))
-    (t/is (= 62 (count edges)))
+    (t/is (= 40 (count nodes)))
+    (t/is (= 66 (count edges)))
     (t/is (nodes-set "clojure.core/str") "var the graph was built for is not a node")
     (t/is (nodes-set "mranderson.move/sym->file") "dependent node on 'clojure.core/str' is not a node")))
 

@@ -25,7 +25,7 @@
 (defn lint-analysis [paths]
   (:analysis
    (clj-kondo/run! {:lint paths
-                    :config {:output {:analysis true}}})))
+                    :config {:output {:analysis {:keywords true}}}})))
 
 (defn ->vars [analysis]
   (map

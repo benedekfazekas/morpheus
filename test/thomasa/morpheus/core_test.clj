@@ -38,6 +38,15 @@
     (t/is (nodes-set "rewrite-clj.zip/node") "mranderson dependency var is not node")
     (t/is (nodes-set "clojure.core/let") "clojure.core var is not node")))
 
+(t/deftest var-deps-graph-exclusion-test
+  (let [mranderson-graph (m/var-deps-graph mranderson-analysis nil #"clojure.core/.*")
+        nodes (m/->nodes mranderson-graph)
+        nodes-set (set nodes)]
+    (t/is (= 183 (count nodes)) "Not the expected number of nodes found.")
+    (t/is (nodes-set "mranderson.move/replace-in-ns-form") "mranderson var is not node")
+    (t/is (nodes-set "rewrite-clj.zip/node") "mranderson dependency var is not node")
+    (t/is (not (nodes-set "clojure.core/let")) "clojure.core var should be excluded and not a node node")))
+
 (t/deftest var-usages-graph-test
   (let [mranderson-core-str-graph (m/var-usages-graph mranderson-analysis "clojure.core/str")
         nodes (m/->nodes mranderson-core-str-graph)
@@ -46,6 +55,18 @@
     (t/is (= 40 (count nodes)))
     (t/is (= 66 (count edges)))
     (t/is (nodes-set "clojure.core/str") "var the graph was built for is not a node")
+    (t/is (nodes-set "leiningen.inline-deps/generate-default-project-prefix") "dependent node on 'clojure.core/str' is not a node")
+    (t/is (nodes-set "mranderson.move/sym->file") "dependent node on 'clojure.core/str' is not a node")))
+
+(t/deftest var-usages-graph-exclusion-test
+  (let [mranderson-core-str-graph (m/var-usages-graph mranderson-analysis "clojure.core/str" #"leiningen.*")
+        nodes (m/->nodes mranderson-core-str-graph)
+        edges (m/->edges mranderson-core-str-graph)
+        nodes-set (set nodes)]
+    (t/is (= 38 (count nodes)))
+    (t/is (= 63 (count edges)))
+    (t/is (nodes-set "clojure.core/str") "var the graph was built for is not a node")
+    (t/is (not (nodes-set "leiningen.inline-deps/generate-default-project-prefix")) "all packages starting with 'leiningen' should be excluded")
     (t/is (nodes-set "mranderson.move/sym->file") "dependent node on 'clojure.core/str' is not a node")))
 
 (t/deftest filename-test

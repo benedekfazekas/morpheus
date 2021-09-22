@@ -8,7 +8,7 @@
 (defn usage [options-summary]
   (str/join
    "\n"
-   ["Usage: morpheus -d DIR -f FORMAT [-r VAR] [--verbose] [--help] paths"
+   ["Usage: morpheus -d DIR -f FORMAT [-r VAR] [-e EXCLUDE-REGEXP] [--verbose] [--help] paths"
     options-summary]))
 
 (defn- var-usages->file!
@@ -21,8 +21,7 @@
 
 (defn- var-deps->file!
   [graph var int-vars all-vars format dir]
-  (-> (m/node->subgraph graph var)
-      (m/node-add-ref-to-comp-graph all-vars format "-usgs")
+  (-> (m/node-add-ref-to-comp-graph graph all-vars format "-usgs")
       (m/edge-add-ref-to-subgraph int-vars format)
       (m/graph->file! dir var format)))
 
@@ -32,7 +31,7 @@
                     (set (filter (set all-internal-vars) all-subgraph-vars)))))
 
 (defn -main [& args]
-  (let [{:keys [arguments errors summary] {:keys [dir format help var verbose]} :options}
+  (let [{:keys [arguments errors summary] {:keys [dir format help var exclude-regexp verbose]} :options}
         (cli/parse-opts
          args
          [["-d" "--dir DIR" "Directory to save output files to"
@@ -42,6 +41,8 @@
            :default "dot"
            :validate [#{"dot" "png" "svg"}]]
           ["-r" "--var VAR" "Variable to generate subgraph view for"]
+          ["-e" "--exclude-regexp EXCLUDE-REGEXP" "Regexp to exclude nodes from the graph"
+           :parse-fn #(when % (re-pattern %))]
           ["-v" "--verbose"]
           ["-h" "--help"]])]
     (cond
@@ -55,10 +56,10 @@
 
       :else
       (let [analysis (m/lint-analysis arguments)
-            graph (m/var-deps-graph analysis)
-            all-internal-vars (m/->vars analysis)
-            all-vars (m/->nodes graph)
+            graph (m/var-deps-graph analysis exclude-regexp)
+            all-internal-vars (m/->vars analysis exclude-regexp)
             internal-vars (if var [var] all-internal-vars)
+            all-vars (m/->nodes graph)
             ext-vars (if var
                        (ext-vars-for-var graph var all-internal-vars)
                        (set/difference (set all-vars) (set internal-vars)))]
@@ -66,11 +67,11 @@
           (when verbose
             (println (str "Generating graphs for " var))
             (println (str "  Generating deps graph")))
-          (var-deps->file! graph var internal-vars all-vars format dir)
+          (var-deps->file! (m/var-deps-graph analysis var exclude-regexp) var internal-vars all-vars format dir)
           (when verbose
             (println (str "  Generatig usages graph")))
-          (var-usages->file! (m/var-usages-graph analysis var) var internal-vars format dir))
+          (var-usages->file! (m/var-usages-graph analysis var exclude-regexp) var internal-vars format dir))
         (doseq [ext-var ext-vars]
           (when verbose
             (println (str "Generatig usages graph for external var " ext-var)))
-          (var-usages->file! (m/var-usages-graph analysis ext-var) ext-var ext-vars format dir false))))))
+          (var-usages->file! (m/var-usages-graph analysis ext-var exclude-regexp) ext-var ext-vars format dir false))))))

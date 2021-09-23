@@ -12,7 +12,7 @@ Add an alias for `morpheus` in your deps.edn.
 ```clojure
 {:aliases
   {:morpheus {:extra-deps {thomasa/morpheus {:git/url "https://github.com/benedekfazekas/morpheus.git"
-                                             :sha "4e8c92edb6ddbeb176a132b3ee1867b2f42e9050"}}
+                                             :git/sha "ac982a62ef5141b556bd18e352b9e318ec129818"}}
               :main-opts ["-m" "thomasa.morpheus.main"]}}}
 ```
 

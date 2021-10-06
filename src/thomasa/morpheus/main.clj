@@ -57,7 +57,7 @@
       :else
       (let [analysis (m/lint-analysis arguments)
             graph (m/var-deps-graph analysis exclude-regexp)
-            all-internal-vars (m/->vars analysis exclude-regexp)
+            all-internal-vars (m/->vars-and-kw-regs analysis exclude-regexp)
             internal-vars (if var [var] all-internal-vars)
             all-vars (m/->nodes graph)
             ext-vars (if var

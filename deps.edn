@@ -1,7 +1,7 @@
 {:paths ["src"]
  :deps {org.clojure/clojure {:mvn/version "RELEASE"}
         aysylu/loom {:mvn/version "1.0.2"}
-        clj-kondo {:mvn/version "2021.09.15"}
+        clj-kondo {:mvn/version "2021.09.26-kwanal"}
         org.clojure/tools.cli {:mvn/version "0.4.2"}}
  :aliases
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-590"}

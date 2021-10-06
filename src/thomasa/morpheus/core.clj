@@ -27,22 +27,29 @@
    (clj-kondo/run! {:lint paths
                     :config {:output {:analysis {:keywords true}}}})))
 
-(defn ->vars
+(defn ->vars-and-kw-regs
   [analysis exclude-regexp]
-  (->> (:var-definitions analysis)
-       (map (fn [{:keys [ns name]}] (str ns "/" name)))
+  (->> (:keywords analysis)
+       (filter :reg)
+       (concat (:var-definitions analysis))
+       (map (fn [{:keys [ns from-ns name]}] (str (or ns from-ns) "/" name)))
        (remove #(and exclude-regexp (re-matches exclude-regexp %)))))
 
 (defn ->usages
   [analysis exclude-regexp]
-  (->> (:var-usages analysis)
-       (map
-        (fn [{:keys [name to from from-var]}]
-          [(str from "/" from-var) (str to "/" name)]))
-       (remove
-        (fn [[from to]]
-          (and exclude-regexp
-               (or (re-matches exclude-regexp from) (re-matches exclude-regexp to)))))))
+  (let [kws (remove :ns (filter :reg (:keywords analysis)))
+        kw->from-ns (zipmap (map :name kws) (map :from-ns kws))]
+    (->> (:keywords analysis)
+         (filter :from-var)
+         (concat (:var-usages analysis))
+         (filter (fn [{:keys [to ns name]}] (or to ns (kw->from-ns name))))
+         (map
+          (fn [{:keys [name to ns from from-ns from-var]}]
+            [(str (or from from-ns) "/" from-var) (str (or to ns (kw->from-ns name)) "/" name)]))
+         (remove
+          (fn [[from to]]
+            (and exclude-regexp
+                 (or (re-matches exclude-regexp from) (re-matches exclude-regexp to))))))))
 
 ;; graph
 (defn ->nodes
@@ -121,7 +128,7 @@
   ([analysis var]
    (var-deps-graph analysis var nil))
   ([analysis var exclude-regexp]
-   (let [graph (->graph (->vars analysis exclude-regexp) (->usages analysis exclude-regexp))]
+   (let [graph (->graph (->vars-and-kw-regs analysis exclude-regexp) (->usages analysis exclude-regexp))]
      (if var (node->subgraph graph var) graph))))
 
 ;; decorating graphs

@@ -2,6 +2,7 @@
   (:require [thomasa.morpheus.core :as m]
             [clojure.tools.cli :as cli]
             [clojure.java.io :as io]
+            [clojure.pprint]
             [clojure.string :as str]
             [clojure.set :as set]))
 
@@ -56,7 +57,7 @@
 
       :else
       (let [analysis (m/lint-analysis arguments)
-            graph (m/var-deps-graph analysis exclude-regexp)
+            graph (m/var-deps-graph analysis var exclude-regexp)
             all-internal-vars (m/->vars analysis exclude-regexp)
             internal-vars (if var [var] all-internal-vars)
             all-vars (m/->nodes graph)
@@ -71,6 +72,12 @@
           (when verbose
             (println (str "  Generatig usages graph")))
           (var-usages->file! (m/var-usages-graph analysis var exclude-regexp) var internal-vars format dir))
+        ;; (println "keywords ----")
+        ;; (clojure.pprint/pprint (:keywords analysis))
+        ;; (println "ext vars ----")
+        ;; (clojure.pprint/pprint ext-vars)
+        ;; (println "all vars ----")
+        ;; (clojure.pprint/pprint all-vars)
         (doseq [ext-var ext-vars]
           (when verbose
             (println (str "Generatig usages graph for external var " ext-var)))

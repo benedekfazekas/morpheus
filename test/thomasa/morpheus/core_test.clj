@@ -6,6 +6,7 @@
             [clojure.java.shell :as sh]))
 
 (def mranderson-analysis (:analysis (edn/read-string (slurp "test-resources/analysis-kondo-2021-09-15.edn"))))
+(def re-frame-datatable-analysis (edn/read-string (slurp "test-resources/analysis-re-frame-datatable.edn")))
 
 (t/deftest analysis-test
   (let [morph-temp-dir (doto (java.io.File/createTempFile "morpheus" "") (.delete) (.mkdirs))]
@@ -103,3 +104,42 @@
                     "mranderson.move/replace-in-import*"])
         subgraph-with-refs (m/edge-add-ref-to-subgraph subgraph (m/->nodes subgraph) :svg)]
     (t/is (= "./mranderson.move__java-package.svg" (attr/attr subgraph-with-refs ["mranderson.move/->new-import-node" "mranderson.move/java-package"] :URL)) "URL ref is for edge is not pointing where the edge is pointing")))
+
+(t/deftest var-deps-graph-re-frame-test
+  (let [re-frame-datatable-init-db-graph (m/var-deps-graph re-frame-datatable-analysis "re-frame-datatable-example.events/initialize-db" #"clojure.core/.*|cljs\..*|:clj-kondo/unknown-namespace/.*")
+        nodes (m/->nodes re-frame-datatable-init-db-graph)]
+    (t/is (= 5 (count nodes)) "could not find all dependencies of re-frame-datatable-example.events/initialize-db")
+    (t/is (= #{"re-frame-datatable-example.events/initialize-db"
+              "re-frame-datatable-example.db/default-db"
+              "re-frame-datatable-example.model/sample-inbox"
+              "re-frame-datatable-example.model/labels"
+              "re-frame-datatable-example.model/thread"}
+             (set nodes))
+          "could not find the right dependencies of re-frame-datatable-example.events/initialize-db")
+    (t/is (= #{["re-frame-datatable-example.events/initialize-db"
+                "re-frame-datatable-example.db/default-db"]
+              ["re-frame-datatable-example.db/default-db"
+               "re-frame-datatable-example.model/sample-inbox"]
+              ["re-frame-datatable-example.db/default-db"
+               "re-frame-datatable-example.model/labels"]
+              ["re-frame-datatable-example.model/sample-inbox"
+                "re-frame-datatable-example.model/thread"]}
+             (set (m/->edges re-frame-datatable-init-db-graph)))
+          "could not find all edges on the dep graph for re-frame-datatable-example.events/initialize-db")))
+
+(t/deftest var-usages-re-frame-test
+  (let [re-frame-datatable-active-label-graph (m/var-usages-graph re-frame-datatable-analysis "re-frame-datatable-example.subs/active-label" #"clojure.core/.*|cljs\..*|:clj-kondo/unknown-namespace/.*")
+        nodes (m/->nodes re-frame-datatable-active-label-graph)]
+    (t/is (= 3 (count nodes)) "could not find all usages nodes for re-frame-datatable-example.subs/active-label")
+    (t/is (= #{"re-frame-datatable-example.subs/active-label"
+              "re-frame-datatable-example.views/main-panel"
+              "re-frame-datatable-example.subs/threads-digest"}
+             (set nodes))
+          "could not find the right usages nodes for re-frame-datatable-example.subs/active-label")
+    (t/is (= #{["re-frame-datatable-example.views/main-panel"
+                "re-frame-datatable-example.subs/active-label"]
+              ["re-frame-datatable-example.views/main-panel"
+               "re-frame-datatable-example.subs/threads-digest"]
+              ["re-frame-datatable-example.subs/threads-digest"
+               "re-frame-datatable-example.subs/active-label"]}
+             (set (m/->edges re-frame-datatable-active-label-graph))))))

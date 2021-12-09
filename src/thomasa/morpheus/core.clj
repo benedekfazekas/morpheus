@@ -25,24 +25,39 @@
 (defn lint-analysis [paths]
   (:analysis
    (clj-kondo/run! {:lint paths
-                    :config {:output {:analysis {:keywords true}}}})))
+                    :config {:output {:analysis {:keywords true
+                                                 :context [:re-frame.core]}}}})))
 
 (defn ->vars
   [analysis exclude-regexp]
-  (->> (:var-definitions analysis)
-       (map (fn [{:keys [ns name]}] (str ns "/" name)))
+  (->> (:keywords analysis)
+       (filter #(get-in % [:context :re-frame.core :id]))
+       (concat (:var-definitions analysis))
+       (map (fn [{:keys [ns from name]}] (str (or ns from) "/" name)))
        (remove #(and exclude-regexp (re-matches exclude-regexp %)))))
+
+(defn ->re-frame-usages [kw-anal id->kw]
+  (let [name->kw (into {} (map (juxt :name identity) (vals id->kw)))]
+    (->> (filter (fn [kw] (some #{:subscription-ref :event-ref} (keys (get-in kw [:context :re-frame.core])))) kw-anal)
+         (map (fn [{:keys [from from-var ns name context]}]
+                (let [from-kw (id->kw (get-in context [:re-frame.core :in-id]))]
+                  [(str from "/" (or from-var (:name from-kw)))
+                   (str (or ns (:from (name->kw name))) "/" name)]))))))
 
 (defn ->usages
   [analysis exclude-regexp]
-  (->> (:var-usages analysis)
-       (map
-        (fn [{:keys [name to from from-var]}]
-          [(str from "/" from-var) (str to "/" name)]))
-       (remove
-        (fn [[from to]]
-          (and exclude-regexp
-               (or (re-matches exclude-regexp from) (re-matches exclude-regexp to)))))))
+  (let [kw-anal (:keywords analysis)
+        id->kw (into {} (map (juxt (comp :id :re-frame.core :context) identity) (filter #(get-in % [:context :re-frame.core :id]) kw-anal)))]
+    (->> (:var-usages analysis)
+         (map
+          (fn [{:keys [name to from from-var context] :as usage}]
+            [(str from "/" (or from-var (:name (id->kw (get-in context [:re-frame.core :in-id])))))
+             (str to "/" name)]))
+         (concat (->re-frame-usages kw-anal id->kw))
+         (remove
+          (fn [[from to]]
+            (and exclude-regexp
+                 (or (re-matches exclude-regexp from) (re-matches exclude-regexp to))))))))
 
 ;; graph
 (defn ->nodes

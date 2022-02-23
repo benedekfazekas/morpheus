@@ -7,6 +7,7 @@
 
 (def mranderson-analysis (:analysis (edn/read-string (slurp "test-resources/analysis-kondo-2021-09-15.edn"))))
 (def re-frame-datatable-analysis (edn/read-string (slurp "test-resources/analysis-re-frame-datatable.edn")))
+(def re-frame-todomvc-analysis (edn/read-string (slurp "test-resources/analysis-re-frame-todomvc.edn")))
 
 (t/deftest analysis-test
   (let [morph-temp-dir (doto (java.io.File/createTempFile "morpheus" "") (.delete) (.mkdirs))]
@@ -138,3 +139,11 @@
               ["re-frame-datatable-example.subs/threads-digest"
                "re-frame-datatable-example.subs/active-label"]}
              (set (m/->edges re-frame-datatable-active-label-graph))))))
+
+(t/deftest var-deps-re-frame-cofx-test
+  (let [re-frame-todomvc-init-db-graph (m/var-deps-graph re-frame-todomvc-analysis "todomvc.events/initialise-db" #"clojure.core/.*|cljs\..*|:clj-kondo/unknown-namespace/.*")
+        nodes (set (m/->nodes re-frame-todomvc-init-db-graph))
+        edges (set (m/->edges re-frame-todomvc-init-db-graph))]
+    (t/is (nodes "todomvc.db/local-store-todos"))
+    (t/is (edges ["todomvc.events/initialise-db" "todomvc.db/local-store-todos"]))
+    (t/is (edges ["todomvc.db/local-store-todos" "todomvc.db/ls-key"]))))

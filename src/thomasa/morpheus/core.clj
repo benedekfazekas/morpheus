@@ -38,7 +38,7 @@
 
 (defn ->re-frame-usages [kw-anal id->kw]
   (let [name->kw (into {} (map (juxt :name identity) (vals id->kw)))]
-    (->> (filter (fn [kw] (some #{:subscription-ref :event-ref} (keys (get-in kw [:context :re-frame.core])))) kw-anal)
+    (->> (filter (fn [kw] (some #{:subscription-ref :event-ref :cofx-ref} (keys (get-in kw [:context :re-frame.core])))) kw-anal)
          (map (fn [{:keys [from from-var ns name context]}]
                 (let [from-kw (id->kw (get-in context [:re-frame.core :in-id]))]
                   [(str from "/" (or from-var (:name from-kw)))

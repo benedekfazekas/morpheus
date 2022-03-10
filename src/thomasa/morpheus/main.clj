@@ -36,10 +36,10 @@
          args
          [["-d" "--dir DIR" "Directory to save output files to"
            :parse-fn #(.getCanonicalFile (io/file %))
-           :validate [#(.exists %)]]
+           :validate [#(.exists %) #(str % " does not seem to exist. Have you created it?")]]
           ["-f" "--format FORMAT" "dot, png, svg"
            :default "dot"
-           :validate [#{"dot" "png" "svg"}]]
+           :validate [#{"dot" "png" "svg"} #(str "dot, png, svg supported. '" % "' not recognised.")]]
           ["-r" "--var VAR" "Variable to generate subgraph view for"]
           ["-e" "--exclude-regexp EXCLUDE-REGEXP" "Regexp to exclude nodes from the graph"
            :parse-fn #(when % (re-pattern %))]

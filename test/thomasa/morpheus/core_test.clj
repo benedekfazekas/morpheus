@@ -22,7 +22,7 @@
              (set (keys mranderson-053-analysis)))
             "analysis should have the sections morpheus wants to work with")
       (t/is (= 94 (count (:var-definitions mranderson-053-analysis))) "analysis should contain the right amount of var defs")
-      (t/is (= 1220 (count (:var-usages mranderson-053-analysis))) "analysis should contain the right amount of var usages"))))
+      (t/is (= 1194 (count (:var-usages mranderson-053-analysis))) "analysis should contain the right amount of var usages"))))
 
 (t/deftest low-level-graph-api-test
   (let [graph (#'m/->graph ["A"] [["A" "B"] ["A" "C"]])]
